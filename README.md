@@ -1,71 +1,59 @@
 ## Abony Kamal
 
-CSE undergraduate at BUET, working on agentic AI systems and human–computer interaction.
+Final-year CSE undergraduate at BUET, building production-oriented AI systems and researching how people relate to them.
 
-I build systems that retrieve, reason, and act — LLM agents, RAG pipelines, multi-agent
-architectures — and I research how people actually relate to them. My undergraduate thesis
-is in HCI, on human–AI companion relationships in conversational systems.
+I build LLM agents, RAG pipelines and multi-agent applications, with a focus on making AI features reliable, optional and checkable rather than trusted by default. My undergraduate thesis is in HCI, on AI-initiated relational behaviours in conversational systems.
 
-**Interested in:** agentic AI · LLM systems engineering · human–AI interaction · responsible AI in low-resource contexts
+**Interested in:** agentic AI · LLM systems engineering · AI security · human–AI interaction
 
 ---
 
 ### Selected work
 
+#### BUET Job Portal · AI-integrated recruitment platform (*private, university project*)
+
+**Team lead and system architect** for a five-person team building a platform that covers a university's hiring cycle, from circular publication to applications, screening, evaluation and ranking.
+
+I designed the AI integration architecture. Every LLM feature lives in an optional plugin behind a vendor-neutral provider layer, so the core platform runs unchanged when AI is switched off.
+
+- **Applicant chatbot.** A LangGraph assistant with intent routing, RAG and cross-plugin delegation, plus timeouts, retries and circuit breaking for provider failures.
+- **Recruiter-assist.** AI tools that turn circular PDFs into draft job posts, edit admit card and notification templates from plain-English instructions, and summarise audit logs. The model proposes and the recruiter decides. Every output is validated in code before a recruiter sees it, and anything the model gets wrong is left blank rather than guessed.
+
+I also designed the Recruitment Management architecture and set up the team's CI pipelines, repository hooks and coding agent workflow.
+
+`Java` · `Spring Boot` · `React/TypeScript` · `Python` · `FastAPI` · `LangGraph` · `PostgreSQL` · `Qdrant` · `Neo4j` · `Redis` · `Docker`
+
 #### [patient-simulator](https://github.com/Abonykamal/patient-simulator) · Multi-agent clinical training simulation
 
-Medical students practise history-taking by interviewing an AI-played patient, then receive
-structured examiner-style feedback. Three character agents — patient, nurse, family member —
-hold independent knowledge slices, with the patient disclosing sensitive facts only as rapport
-develops; a routing controller decides who answers each turn. Cases are synthesised from a
-clinical corpus through a retrieve–generate–validate pipeline rather than hand-authored.
+Medical students practise history taking by interviewing AI-played patients, nurses and family members, then receive examiner-style feedback. Each character has its own knowledge and context, and the patient reveals sensitive history only as the student builds rapport. New patient cases are generated from a clinical corpus through a retrieve, generate and validate pipeline.
 
-Grading runs on a **separate, larger model on a different provider**, so the patient agent never
-evaluates itself, with score aggregation computed deterministically in code. Provider-agnostic
-LLM layer with cross-provider failover, event-sourced conversation turns, and 166 tests that
-run against mocked providers.
+Grading runs on a **separate model from a different provider**, so the patient agent never grades itself, and the final score is computed in code. The LLM layer is provider-agnostic with cross-provider failover, and conversation turns are stored as events so a failed call is always safe to retry.
 
 `Python` · `FastAPI` · `Streamlit` · `ChromaDB` · `SQLite` · `NetworkX`
 
-#### BUET Job Portal · AI-augmented recruitment platform — *private (university deployment)*
+#### [InjectRAG](https://github.com/Abonykamal/CSE-406-InjectRAG) · Indirect prompt injection through RAG
 
-**Team lead.** A platform covering a university's full hiring lifecycle across five services and
-four datastores, replacing a manual PDF- and spreadsheet-based process.
+A corpus poisoning attack on a simulated IT helpdesk chatbot, where malicious support tickets carry instructions that hijack the chatbot's answers once retrieved. I designed the RAG pipeline and the attack.
 
-A backend-authoritative plugin architecture keeps every AI capability optional and independently
-degradable — the core product runs correctly with all models switched off. The conversational
-assistant is built on a LangGraph state machine with intent routing, RAG over institutional
-documents, cross-plugin delegation with soft-fail, and a provider abstraction handling timeout,
-retry-with-jitter, and circuit breaking. Candidate matching runs six weighted dimensions with
-per-post score explanations behind a hard eligibility gate.
+Poisoned tickets reached the model's context on 94% of target questions. Attack success **rose with model size**, from 28% at 1.5B to 61% at 7B and about 80% at 20B parameters. Spotlighting gave no reliable protection on any model, and controlled experiments showed the smaller model resisted only because it follows instructions poorly, not because it is safer.
 
-Auditability is built into the data model: every automated evaluation records the entity assessed,
-the score, and the model version, so a ranking decision affecting someone's job can be explained
-from the record rather than re-run.
+`Python` · `FastAPI` · `Qdrant` · `Groq` · `Ollama`
 
-`Java` · `Spring Boot` · `React/TypeScript` · `Python` · `FastAPI` · `PostgreSQL` · `Neo4j` · `Qdrant` · `Redis` · `Docker`
+#### [Engineering-OS](https://github.com/Abonykamal/Engineering-OS) · A development workflow for AI-assisted coding
 
-#### [BanglaDialToEn](https://github.com/fa88923/BanglaDialToEn) · Dialect-aware translation for five Bangladeshi regional dialects
+A reusable Claude Code plugin that gives any repository a spec, plan, implement, review and release workflow, with human approval gates scaled to task size. A stack-independent verification contract, called by hooks and CI, blocks "done" claims until tests have actually run.
 
-Route-then-translate. A BanglaBERT classifier identifies the dialect (89.21% accuracy, 87.1%
-macro-F1), then routes to a dialect-specific PEFT adapter over NLLB-200. The combined pipeline
-reaches 43.37 SacreBLEU and 64.81 chrF++ across ~50.7K samples curated from seven sources with
-deduplication and leakage prevention.
+`Claude Code` · `skills` · `agents` · `hooks`
 
-DoRA outperformed LoRA for only two of the five dialects — adapter gains turn out to be
-dialect-dependent rather than universal.
+#### [BanglaDialToEn](https://github.com/fa88923/BanglaDialToEn) · Translation for five Bangladeshi regional dialects
+
+Route-then-translate. A BanglaBERT classifier identifies the dialect (89.2% accuracy), then routes to a dialect-specific PEFT adapter over NLLB-200, reaching 43.4 SacreBLEU across all five dialects. DoRA beat LoRA for only two dialects, so adapter gains turned out to depend on the dialect.
 
 `Python` · `PyTorch` · `Hugging Face PEFT`
 
 #### [CSE322-ns3-project](https://github.com/Abonykamal/CSE322-ns3-project) · RTT fairness in BBR congestion control
 
-Implemented and experimentally compared standard BBR, BBR with gamma correction, and two
-modifications of my own on NS-3 dumbbell topologies. With competing 10 ms and 50 ms RTT flows
-over a 30 Mbps bottleneck, Jain's Fairness Index moved from 0.674 to 0.963.
-
-My two modifications *underperformed* the base algorithm, and the more useful result was working
-out why: synchronised gain-reset timers drove both flows to identical behaviour simultaneously,
-and EMA smoothing introduced asymmetric response lag between the fast and slow flows.
+Compared standard BBR, BBR with gamma correction and two modifications of my own in NS-3. Gamma correction raised Jain's Fairness Index from 0.674 to 0.963. My own modifications underperformed, and the more useful result was working out why: synchronised gain-reset timers and asymmetric smoothing lag.
 
 `C++` · `NS-3`
 
@@ -73,19 +61,19 @@ and EMA smoothing introduced asymmetric response lag between the fast and slow f
 
 ### Currently
 
-- **HCI thesis** — human–AI companion relationships in conversational systems, at BUET.
-- **Engineering-OS** — a reusable process kernel for AI-assisted development: lifecycle workflows, a stack-agnostic verify contract, quality gates calibrated to task size, and promotion-based memory. Private while in review.
+- **HCI thesis** on AI-initiated relational behaviours in conversational systems, supervised by Dr. Novia Nurain at BUET.
+- **BUET Job Portal**, continuing as team lead.
 
 ---
 
 ### Toolkit
 
-**Languages** Python · Java · TypeScript · C/C++ · SQL
+**Languages** Python · TypeScript · Java · SQL · C/C++
 
-**AI systems** LangGraph · RAG · multi-agent orchestration · PEFT/LoRA fine-tuning · LLM-as-judge evaluation · vector retrieval
+**AI systems** LangGraph · RAG · multi-agent orchestration · LLM evaluation · PEFT/LoRA · vector search
 
-**Infrastructure** FastAPI · Spring Boot · React · Docker · PostgreSQL · Neo4j · Qdrant · ChromaDB · Redis
+**Infrastructure** FastAPI · Spring Boot · React · Docker · PostgreSQL · Qdrant · ChromaDB · Neo4j · Redis
 
 ---
 
-📍 Dhaka, Bangladesh · [LinkedIn](www.linkedin.com/in/abony-kamal-716057206) · abonykamal@gmail.com
+📍 Dhaka, Bangladesh · [LinkedIn](https://www.linkedin.com/in/abony-kamal-716057206) · abonykamal@gmail.com
